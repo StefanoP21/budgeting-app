@@ -2,15 +2,36 @@
 import { useLoaderData } from 'react-router-dom';
 
 // helpers
-import { fetchData } from '../helpers';
+import { deleteItem, fetchData } from '../helpers';
 
 // component imports
 import Table from '../components/Table';
+
+// library import
+import { toast } from 'react-toastify';
 
 //loader
 export function expensesLoader() {
   const expenses = fetchData('expenses');
   return { expenses };
+}
+
+// action
+export async function expensesAction({ request }) {
+  const data = await request.formData();
+  const { _action, ...values } = Object.fromEntries(data);
+  // delete expense
+  if (_action === 'deleteExpense') {
+    try {
+      deleteItem({
+        key: 'expenses',
+        id: values.expenseId,
+      });
+      return toast.success('¡Gasto eliminado!');
+    } catch (e) {
+      throw new Error('Hubo un problema al eliminar tu gasto.');
+    }
+  }
 }
 
 const ExpensesPage = () => {
@@ -27,7 +48,7 @@ const ExpensesPage = () => {
           <Table expenses={expenses} />
         </div>
       ) : (
-        <p>Ningún gasto</p>
+        <p>Ningún gasto que mostrar.</p>
       )}
     </div>
   );

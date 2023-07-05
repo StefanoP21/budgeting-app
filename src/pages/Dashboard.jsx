@@ -2,7 +2,13 @@
 import { Link, useLoaderData } from 'react-router-dom';
 
 // helper functions
-import { createBudget, createExpense, fetchData, wait } from '../helpers';
+import {
+  createBudget,
+  createExpense,
+  deleteItem,
+  fetchData,
+  wait,
+} from '../helpers';
 
 // components
 import Intro from '../components/Intro';
@@ -64,7 +70,20 @@ export async function dashboardAction({ request }) {
       });
       return toast.success('¡Gasto agregado!');
     } catch (e) {
-      throw new Error('Hubo un problema al crear tu presupuesto.');
+      throw new Error('Hubo un problema al agregar tu gasto.');
+    }
+  }
+
+  // delete expense
+  if (_action === 'deleteExpense') {
+    try {
+      deleteItem({
+        key: 'expenses',
+        id: values.expenseId,
+      });
+      return toast.success('¡Gasto eliminado!');
+    } catch (e) {
+      throw new Error('Hubo un problema al eliminar tu gasto.');
     }
   }
 }
